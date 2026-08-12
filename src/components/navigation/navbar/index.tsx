@@ -8,7 +8,7 @@ const Navbar = () => {
     <nav className="flex-between background-light900_dark200 shadow-light-300 fixed z-50 w-full gap-5 p-6 sm:px-12 dark:shadow-none">
       <Link href="/" className="flex items-center gap-1">
         <div className="relative size-10">
-          <Image src="/images/site-logo.png" alt="StackForge Logo" fill className="object-contain" />
+          <Image src="/images/site-logo.png" alt="StackForge Logo" sizes="fixed" fill className="object-contain" />
         </div>
         <p className="h2-bold font-space-grotesk text-dark-100 dark:text-light-900 max-sm:hidden">
           Stack<span className="text-primary-500">Forge</span>
