@@ -2,6 +2,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Theme from "./Theme";
+import MobileNavigation from "./MobileNavigation";
 
 const Navbar = () => {
   return (
@@ -11,7 +12,7 @@ const Navbar = () => {
           <Image src="/images/site-logo.png" alt="StackForge Logo" sizes="fixed" fill className="object-contain" />
         </div>
         <p className="h2-bold font-space-grotesk text-dark-100 dark:text-light-900 max-sm:hidden">
-          Stack<span className="text-primary-500">Forge</span>
+          Stack<span className="primary-text-gradient">Forge</span>
         </p>
       </Link>
 
@@ -19,6 +20,8 @@ const Navbar = () => {
 
       <div className="flex-between gap-5">
         <Theme />
+
+        <MobileNavigation />
       </div>
     </nav>
   );
