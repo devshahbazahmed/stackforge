@@ -30,6 +30,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${inter.variable} ${space_grotesk.variable} bg-dark-100 text-light-900 h-full antialiased`}
     >
+      <head>
+        <link
+          rel="stylesheet"
+          type="text/css"
+          href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
+        />
+      </head>
       <SessionProvider session={session}>
         <body className="flex min-h-full flex-col">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
