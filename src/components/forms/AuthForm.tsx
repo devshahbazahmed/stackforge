@@ -37,7 +37,7 @@ export default function AuthForm<T extends FieldValues>({
   const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";
 
   return (
-    <form id="form-rhf-demo" onSubmit={form.handleSubmit(handleSubmit)} className="mt-10 space-y-6">
+    <form id="auth-form" onSubmit={form.handleSubmit(handleSubmit)} className="mt-10 space-y-6">
       <FieldGroup>
         {Object.keys(defaultValues).map((field) => (
           <Controller
