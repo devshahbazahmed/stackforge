@@ -4,6 +4,7 @@ import * as React from "react";
 import AuthForm from "@/components/forms/AuthForm";
 import { SignInSchema } from "@/lib/validations";
 import Image from "next/image";
+import { signInWithCredentials } from "@/lib/actions/auth.action";
 
 const SignInPage = () => {
   return (
@@ -22,7 +23,7 @@ const SignInPage = () => {
         formType="SIGN_IN"
         schema={SignInSchema}
         defaultValues={{ email: "", password: "" }}
-        onSubmit={(data) => Promise.resolve({ success: true, data })}
+        onSubmit={signInWithCredentials}
       />
     </>
   );
