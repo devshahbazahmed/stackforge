@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import AuthForm from "@/components/forms/AuthForm";
-import { signUpSchema } from "@/lib/validations";
+import { SignUpSchema } from "@/lib/validations";
 import Image from "next/image";
 
 const SignUpPage = () => {
@@ -21,7 +21,7 @@ const SignUpPage = () => {
 
       <AuthForm
         formType="SIGN_UP"
-        schema={signUpSchema}
+        schema={SignUpSchema}
         defaultValues={{ email: "", password: "", name: "", username: "" }}
         onSubmit={(data) => Promise.resolve({ success: true, data })}
       />

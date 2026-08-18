@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import AuthForm from "@/components/forms/AuthForm";
-import { signInSchema } from "@/lib/validations";
+import { SignInSchema } from "@/lib/validations";
 import Image from "next/image";
 
 const SignInPage = () => {
@@ -20,7 +20,7 @@ const SignInPage = () => {
       </div>
       <AuthForm
         formType="SIGN_IN"
-        schema={signInSchema}
+        schema={SignInSchema}
         defaultValues={{ email: "", password: "" }}
         onSubmit={(data) => Promise.resolve({ success: true, data })}
       />
