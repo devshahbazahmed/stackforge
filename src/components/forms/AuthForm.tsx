@@ -2,20 +2,22 @@
 
 import * as React from "react";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import type { StandardSchemaV1 } from "@standard-schema/spec";
 import { Controller, DefaultValues, FieldValues, Path, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import ROUTES from "../../constants/routes";
+import ROUTES from "@/constants/routes";
+import { ActionResponse } from "@/types/global";
+import { useRouter } from "next/navigation";
 
 interface AuthFormProps<T extends FieldValues> {
-  schema: z.ZodType<T>;
+  schema: StandardSchemaV1<T, T>;
   defaultValues: T;
-  onSubmit: (data: T) => Promise<{ success: boolean }>;
+  onSubmit: (data: T) => Promise<ActionResponse>;
   formType: "SIGN_IN" | "SIGN_UP";
 }
 
@@ -25,13 +27,26 @@ export default function AuthForm<T extends FieldValues>({
   formType,
   onSubmit,
 }: AuthFormProps<T>) {
-  const form = useForm<z.infer<typeof schema>>({
+  const router = useRouter();
+  const form = useForm<T>({
     resolver: standardSchemaResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
   });
 
-  const handleSubmit: SubmitHandler<T> = async () => {
-    //TODO: Authenticate User
+  const handleSubmit: SubmitHandler<T> = async (data) => {
+    const result = (await onSubmit(data)) as ActionResponse;
+
+    if (result?.success) {
+      toast.success("Success", {
+        description: formType === "SIGN_IN" ? "Signed in successfully" : "Signed up successfully",
+      });
+
+      router.push(ROUTES.HOME);
+    } else {
+      toast.error(`Error: ${result.error}`, {
+        description: result?.error?.message,
+      });
+    }
   };
 
   const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";
@@ -46,14 +61,14 @@ export default function AuthForm<T extends FieldValues>({
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid} className="flex w-full flex-col gap-2.5">
-                <FieldLabel htmlFor="form-rhf-demo-title" className="paragraph-medium text-dark400_light700">
+                <FieldLabel htmlFor="auth-form-title" className="paragraph-medium text-dark400_light700">
                   {field.name === "email" ? "Email address" : field.name.charAt(0).toUpperCase() + field.name.slice(1)}
                 </FieldLabel>
                 <Input
                   required
                   type={field.name === "password" ? "password" : "text"}
                   {...field}
-                  id="form-rhf-demo-title"
+                  id="auth-form-title"
                   aria-invalid={fieldState.invalid}
                   placeholder={`Enter ${field.name}`}
                   autoComplete="off"
@@ -67,9 +82,9 @@ export default function AuthForm<T extends FieldValues>({
       </FieldGroup>
       <Field orientation="horizontal">
         <Button
-          form="form-rhf-demo"
+          form="auth-form"
           disabled={form.formState.isSubmitting}
-          className="primary-gradient paragraph-medium rounded-2 font-inter !text-light-900 min-h-12 w-full px-4 py-3"
+          className="primary-gradient paragraph-medium rounded-2 font-inter !text-light-900 min-h-12 w-full cursor-pointer px-4 py-3"
         >
           {form.formState.isSubmitting ? (buttonText === "Sign In" ? "Signing In..." : "Signing up...") : buttonText}
         </Button>
