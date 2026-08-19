@@ -87,7 +87,6 @@
 }
 
 @utility background-light800_dark400 {
-  @apply bg-light-800! dark:bg-dark-400!;
   @apply bg-light-800 dark:bg-dark-400;
 }
 
@@ -108,7 +107,7 @@
 }
 
 @utility background-dark400_light900 {
-  @apply dark:bg-dark-400! bg-light-900!;
+  @apply dark:bg-dark-400 bg-light-900;
 }
 
 @utility text-dark100_light900 {
@@ -120,7 +119,7 @@
 }
 
 @utility text-dark200_light800 {
-  @apply text-dark-200! dark:text-light-800!;
+  @apply text-dark-200 dark:text-light-800;
 }
 
 @utility text-dark300_light700 {
@@ -132,7 +131,7 @@
 }
 
 @utility text-dark500_light700 {
-  @apply text-dark-500! dark:text-light-700!;
+  @apply text-dark-500 dark:text-light-700;
 }
 
 @utility text-dark500_light500 {
@@ -144,7 +143,7 @@
 }
 
 @utility text-dark300_light900 {
-  @apply text-dark-300! dark:text-light-900!;
+  @apply text-dark-300 dark:text-light-900;
 }
 
 @utility text-dark400_light800 {
@@ -152,8 +151,7 @@
 }
 
 @utility text-light400_light500 {
-  @apply text-light-400! dark:text-light-500!;
-  @apply text-light-400! dark:text-light-500!;
+  @apply text-light-400 dark:text-light-500;
 }
 
 @utility text-dark400_light500 {

@@ -136,7 +136,7 @@ export async function editQuestion(params: EditQuestionParams): Promise<ActionRe
     if (tagsToRemove.length > 0) {
       const tagIdsToRemove = tagsToRemove.map((tag: ITagDoc) => tag._id);
 
-      await Tag.updateMany({ _id: { $in: tagIdsToRemove } }, { $inc: { question: -1 } }, { session });
+      await Tag.updateMany({ _id: { $in: tagIdsToRemove } }, { $inc: { questions: -1 } }, { session });
 
       await TagQuestion.deleteMany({ tag: { $in: tagIdsToRemove }, question: questionId }, { session });
 

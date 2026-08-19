@@ -33,13 +33,7 @@ export default async function Home({ searchParams }: SearchParams) {
         </Button>
       </section>
       <section className="mt-11">
-        <LocalSearch
-          imgSrc="/icons/search.svg"
-          iconPosition="left"
-          placeholder="Search for Questions..."
-          otherClasses="flex-1"
-          route="/"
-        />
+        <LocalSearch imgSrc="/icons/search.svg" placeholder="Search for Questions..." otherClasses="flex-1" route="/" />
       </section>
       <HomeFilter />
 

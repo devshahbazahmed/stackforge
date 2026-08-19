@@ -10,11 +10,11 @@ interface LocalSearchProps {
   route: string;
   imgSrc: string;
   placeholder: string;
-  iconPosition: "left" | "right";
+  iconPosition?: "left" | "right";
   otherClasses?: string;
 }
 
-const LocalSearch = ({ route, imgSrc, iconPosition, placeholder, otherClasses }: LocalSearchProps) => {
+const LocalSearch = ({ route, imgSrc, iconPosition = "left", placeholder, otherClasses }: LocalSearchProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
