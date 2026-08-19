@@ -13,7 +13,7 @@ interface TagCardProps {
   compact?: boolean;
   remove?: boolean;
   isButton?: boolean;
-  handleRemove: () => void;
+  handleRemove?: () => void;
 }
 
 const TagCard = ({ _id, name, questions, showCount, compact, remove, isButton, handleRemove }: TagCardProps) => {
