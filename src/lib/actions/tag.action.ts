@@ -1,9 +1,10 @@
-import { QueryFilter } from "mongoose";
-import { ActionResponse, ErrorResponse, PaginatedSearchParams, Tag } from "@/types/global";
+import { Error, QueryFilter } from "mongoose";
+import { ActionResponse, ErrorResponse, PaginatedSearchParams, Question, Tag } from "@/types/global";
 import action from "@/lib/handlers/action";
-import { PaginatedSearchParamsSchema } from "@/lib/validations";
+import { GetTagQuestionsSchema, PaginatedSearchParamsSchema } from "@/lib/validations";
 import handleError from "@/lib/handlers/error";
-import { Tag as TagModel } from "@/database";
+import { Question as QuestionModel, Tag as TagModel } from "@/database";
+import { GetTagQuestionsParams } from "@/types/action";
 
 export async function getTags(
   params: PaginatedSearchParams
@@ -22,7 +23,7 @@ export async function getTags(
   const filterQuery: QueryFilter<typeof TagModel> = {};
 
   if (query) {
-    filterQuery.$or = [{ name: { $regex: query, options: "i" } }];
+    filterQuery.$or = [{ name: { $regex: query, $options: "i" } }];
   }
 
   let sortCriteria = {};
@@ -53,6 +54,54 @@ export async function getTags(
     const isNext = totalTags > skip + tags.length;
 
     return { success: true, data: { tags: JSON.parse(JSON.stringify(tags)), isNext } };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function getTagQuestions(
+  params: GetTagQuestionsParams
+): Promise<ActionResponse<{ tag: Tag; questions: Question[]; isNext: boolean }>> {
+  const validationResult = await action({ params, schema: GetTagQuestionsSchema });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { page = 1, pageSize = 10, query, tagId } = params;
+
+  const skip = (Number(page) - 1) * pageSize;
+  const limit = Number(pageSize);
+
+  try {
+    const tag = await TagModel.findById(tagId);
+
+    if (!tag) throw new Error("Tag not found");
+
+    const filterQuery: QueryFilter<typeof QuestionModel> = {
+      tags: { $in: [tagId] },
+    };
+
+    if (query) {
+      filterQuery.title = { $regex: query, $options: "i" };
+    }
+    const totalQuestions = await QuestionModel.countDocuments(filterQuery);
+
+    const questions = await QuestionModel.find(filterQuery)
+      .select("_id title views answers upvotes downvotes author createdAt")
+      .populate([
+        { path: "author", select: "name image" },
+        { path: "tags", select: "name" },
+      ])
+      .skip(skip)
+      .limit(limit);
+
+    const isNext = totalQuestions > skip + questions.length;
+
+    return {
+      success: true,
+      data: { tag: JSON.parse(JSON.stringify(tag)), questions: JSON.parse(JSON.stringify(questions)), isNext },
+    };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
