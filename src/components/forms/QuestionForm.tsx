@@ -4,13 +4,18 @@ import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { AskQuestionSchema } from "@/lib/validations";
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@base-ui/react";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import dynamic from "next/dynamic";
 import * as z from "zod";
-import TagCard from "../cards/TagCard";
+import TagCard from "@/components/cards/TagCard";
+import { createQuestion } from "@/lib/actions/question.action";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import ROUTES from "@/constants/routes";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 const Editor = dynamic(() => import("@/components/editor"), {
   // Make sure we turn SSR off
@@ -18,7 +23,10 @@ const Editor = dynamic(() => import("@/components/editor"), {
 });
 
 const QuestionForm = () => {
+  const router = useRouter();
   const editorRef = React.useRef<MDXEditorMethods>(null);
+  const [isPending, startTransition] = React.useTransition();
+
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
@@ -29,7 +37,21 @@ const QuestionForm = () => {
   });
 
   const handleCreateQuestion = async (data: z.infer<typeof AskQuestionSchema>) => {
-    console.log(data);
+    startTransition(async () => {
+      const result = await createQuestion(data);
+
+      if (result.success) {
+        toast.success("Success", {
+          description: "Question created successfully",
+        });
+
+        if (result.data) router.push(ROUTES.QUESTIONS(result.data?._id));
+      } else {
+        toast.error(`Error ${result.status}`, {
+          description: result.error?.message || "Something went wrong",
+        });
+      }
+    });
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, field: { value: string[] }) => {
@@ -151,8 +173,15 @@ const QuestionForm = () => {
         />
       </FieldGroup>
       <div className="mt-16 flex justify-end">
-        <Button type="submit" className="primary-gradient !text-light-900 w-fit">
-          Ask Question
+        <Button type="submit" className="primary-gradient !text-light-900 w-fit" disabled={isPending}>
+          {isPending ? (
+            <>
+              <ReloadIcon className="mr-2 size-4 animate-spin" />
+              <span>Submitting</span>
+            </>
+          ) : (
+            <>Ask Question</>
+          )}
         </Button>
       </div>
     </form>

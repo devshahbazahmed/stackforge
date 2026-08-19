@@ -12,17 +12,15 @@ interface Author {
 }
 
 interface Question {
-  question: {
-    _id: string;
-    title: string;
-    description?: string;
-    tags: Tag[];
-    author: Author;
-    createdAt: Date;
-    upvotes: number;
-    answers: number;
-    views: number;
-  };
+  _id: string;
+  title: string;
+  description?: string;
+  tags: Tag[];
+  author: Author;
+  createdAt: Date;
+  upvotes: number;
+  answers: number;
+  views: number;
 }
 
 type ActionResponse<T = null> = {
@@ -40,3 +38,8 @@ type ErrorResponse = ActionResponse<undefined> & { success: false };
 
 type APIErrorResponse = NextResponse<ErrorResponse>;
 type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
+
+interface RouteParams {
+  params: Promise<Record<string, string>>;
+  searchParams: Promise<Record<string, string>>;
+}
