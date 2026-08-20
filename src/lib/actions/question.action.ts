@@ -13,6 +13,7 @@ import handleError from "@/lib/handlers/error";
 import Question, { IQuestionDoc } from "@/database/question.model";
 import Tag, { ITagDoc } from "@/database/tag.model";
 import TagQuestion from "@/database/tagQuestion.model";
+import { CreateQuestionParams, EditQuestionParams, GetQuestionParams } from "@/types/action";
 
 export async function createQuestion(params: CreateQuestionParams): Promise<ActionResponse<QuestionResponse>> {
   const validationResult = await action({ params, schema: AskQuestionSchema, authorize: true });
@@ -172,7 +173,7 @@ export async function getQuestion(params: GetQuestionParams): Promise<ActionResp
   const { questionId } = validationResult.params!;
 
   try {
-    const question = await Question.findById(questionId).populate("author").populate("tags");
+    const question = await Question.findById(questionId).populate("author", "_id name image").populate("tags");
 
     if (!question) throw new Error("Question not found");
 
@@ -225,7 +226,7 @@ export async function getQuestions(
     const totalQuestions = await Question.countDocuments(filterQuery);
     const questions = await Question.find(filterQuery)
       .populate("tags", "name")
-      .populate("author", "name image")
+      .populate("author", "_id name image")
       .lean()
       .sort(sortCriteria)
       .skip(skip)
