@@ -47,7 +47,7 @@ const QuestionForm = ({ question, isEdit = false }: { question?: Question; isEdi
             description: "Question updated successfully",
           });
 
-          if (result.data) router.push(ROUTES.QUESTIONS(result.data?._id));
+          if (result.data) router.push(ROUTES.QUESTIONS(result.data?._id.toString()));
         } else {
           toast.error(`Error ${result.status}`, {
             description: result.error?.message || "Something went wrong",
