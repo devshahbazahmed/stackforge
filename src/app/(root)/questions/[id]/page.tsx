@@ -7,19 +7,25 @@ import TagCard from "@/components/cards/TagCard";
 import Preview from "@/components/editor/Preview";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import ROUTES from "@/constants/routes";
-import { getQuestion } from "@/lib/actions/question.action";
+import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
+import AnswerForm from "@/components/forms/AnswerForm";
 
 const QuestionDetailsPage = async ({ params }: RouteParams) => {
   const { id } = await params;
+  const { success, data: question } = await getQuestion({ questionId: id });
 
-  const { success, data: question, error } = await getQuestion({ questionId: id });
+  after(async () => {
+    await incrementViews({ questionId: id });
+  });
 
   if (!success || !question) {
     return redirect("/404");
   }
 
   const { title, author, createdAt, content, answers, views, tags } = question;
+
   return (
     <>
       <div className="flex-start w-full flex-col">
@@ -65,6 +71,10 @@ const QuestionDetailsPage = async ({ params }: RouteParams) => {
           <TagCard key={tag._id} _id={tag._id as string} name={tag.name} compact />
         ))}
       </div>
+
+      <section className="my-5">
+        <AnswerForm />
+      </section>
     </>
   );
 };
