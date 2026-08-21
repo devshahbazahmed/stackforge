@@ -129,4 +129,5 @@ export const GetAnswersSchema = PaginatedSearchParamsSchema.extend({
 export const AIAnswerSchema = z.object({
   question: z.string().min(5, "Question is. required.").max(120, "Question cannot exceed 130 characters."),
   content: z.string().min(100, "Answer has to be more than 100 characters"),
+  userAnswer: z.string().optional(),
 });
