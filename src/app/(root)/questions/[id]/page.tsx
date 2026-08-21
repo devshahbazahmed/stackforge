@@ -14,6 +14,7 @@ import AnswerForm from "@/components/forms/AnswerForm";
 import { getAnswers } from "@/lib/actions/answer.action";
 import AllAnswers from "@/components/answers/AllAnswers";
 import Votes from "@/components/votes/Votes";
+import { hasVoted } from "../../../../lib/actions/vote.action";
 
 const QuestionDetailsPage = async ({ params }: RouteParams) => {
   const { id } = await params;
@@ -33,6 +34,8 @@ const QuestionDetailsPage = async ({ params }: RouteParams) => {
     error: answersError,
   } = await getAnswers({ questionId: id, page: 1, pageSize: 10, filter: "latest" });
 
+  const hasVotedPromise = hasVoted({ targetId: question._id, targetType: "question" });
+
   const { title, author, createdAt, content, answers, views, tags, upvotes, downvotes } = question;
 
   return (
@@ -46,7 +49,15 @@ const QuestionDetailsPage = async ({ params }: RouteParams) => {
             </Link>
           </div>
           <div className="flex justify-end">
-            <Votes upvotes={upvotes} hasupVoted={true} downvotes={downvotes} hasdownVoted={false} />
+            <React.Suspense fallback={<div>Loading...</div>}>
+              <Votes
+                upvotes={upvotes}
+                downvotes={downvotes}
+                hasVotedPromise={hasVotedPromise}
+                targetType="question"
+                targetId={question._id}
+              />
+            </React.Suspense>
           </div>
         </div>
         <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full">{title}</h2>

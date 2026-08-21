@@ -2,8 +2,8 @@ import { model, models, Schema, Document } from "mongoose";
 
 export interface IVote {
   author: Schema.Types.ObjectId;
-  id: Schema.Types.ObjectId;
-  type: "question" | "answer";
+  actionId: Schema.Types.ObjectId;
+  actionType: "question" | "answer";
   voteType: "upvote" | "downvote";
 }
 
@@ -12,8 +12,8 @@ export type IVoteDoc = IVote & Document;
 const voteSchema = new Schema<IVote>(
   {
     author: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    id: { type: Schema.Types.ObjectId, required: true },
-    type: { type: String, enum: ["question", "answer"], required: true },
+    actionId: { type: Schema.Types.ObjectId, required: true },
+    actionType: { type: String, enum: ["question", "answer"], required: true },
     voteType: { type: String, enum: ["upvote", "downvote"], required: true },
   },
   { timestamps: true }
