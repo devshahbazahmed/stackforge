@@ -1,20 +1,22 @@
 import Link from "next/link";
+import { after } from "next/server";
+import { redirect } from "next/navigation";
 import * as React from "react";
-import { RouteParams, Tag } from "@/types/global";
 import UserAvatar from "@/components/UserAvatar";
 import Metric from "@/components/Metric";
 import TagCard from "@/components/cards/TagCard";
 import Preview from "@/components/editor/Preview";
-import { formatNumber, getTimeStamp } from "@/lib/utils";
-import ROUTES from "@/constants/routes";
-import { getQuestion, incrementViews } from "@/lib/actions/question.action";
-import { redirect } from "next/navigation";
-import { after } from "next/server";
-import AnswerForm from "@/components/forms/AnswerForm";
-import { getAnswers } from "@/lib/actions/answer.action";
-import AllAnswers from "@/components/answers/AllAnswers";
+import SaveQuestion from "@/components/questions/SaveQuestion";
 import Votes from "@/components/votes/Votes";
-import { hasVoted } from "../../../../lib/actions/vote.action";
+import AnswerForm from "@/components/forms/AnswerForm";
+import AllAnswers from "@/components/answers/AllAnswers";
+import { formatNumber, getTimeStamp } from "@/lib/utils";
+import { getQuestion, incrementViews } from "@/lib/actions/question.action";
+import { getAnswers } from "@/lib/actions/answer.action";
+import { hasVoted } from "@/lib/actions/vote.action";
+import { RouteParams, Tag } from "@/types/global";
+import ROUTES from "@/constants/routes";
+import { hasSavedQuestion } from "@/lib/actions/collection.action";
 
 const QuestionDetailsPage = async ({ params }: RouteParams) => {
   const { id } = await params;
@@ -36,6 +38,8 @@ const QuestionDetailsPage = async ({ params }: RouteParams) => {
 
   const hasVotedPromise = hasVoted({ targetId: question._id, targetType: "question" });
 
+  const hasSavedQuestionPromise = hasSavedQuestion({ questionId: question._id });
+
   const { title, author, createdAt, content, answers, views, tags, upvotes, downvotes } = question;
 
   return (
@@ -48,7 +52,7 @@ const QuestionDetailsPage = async ({ params }: RouteParams) => {
               <p className="paragraph-semibold text-dark300_light700">{author.name}</p>
             </Link>
           </div>
-          <div className="flex justify-end">
+          <div className="flex items-center justify-end gap-5">
             <React.Suspense fallback={<div>Loading...</div>}>
               <Votes
                 upvotes={upvotes}
@@ -57,6 +61,9 @@ const QuestionDetailsPage = async ({ params }: RouteParams) => {
                 targetType="question"
                 targetId={question._id}
               />
+            </React.Suspense>
+            <React.Suspense fallback={<div>Loading...</div>}>
+              <SaveQuestion questionId={question._id} hasSavedQuestionPromise={hasSavedQuestionPromise} />
             </React.Suspense>
           </div>
         </div>
