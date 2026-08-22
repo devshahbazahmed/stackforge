@@ -18,8 +18,9 @@ import { RouteParams, Tag } from "@/types/global";
 import ROUTES from "@/constants/routes";
 import { hasSavedQuestion } from "@/lib/actions/collection.action";
 
-const QuestionDetailsPage = async ({ params }: RouteParams) => {
+const QuestionDetailsPage = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
+  const { page, pageSize, filter } = await searchParams;
   const { success, data: question } = await getQuestion({ questionId: id });
 
   after(async () => {
@@ -34,7 +35,7 @@ const QuestionDetailsPage = async ({ params }: RouteParams) => {
     success: areAnswersLoaded,
     data: answersResult,
     error: answersError,
-  } = await getAnswers({ questionId: id, page: 1, pageSize: 10, filter: "latest" });
+  } = await getAnswers({ questionId: id, page: Number(page) || 1, pageSize: Number(pageSize) || 10, filter });
 
   const hasVotedPromise = hasVoted({ targetId: question._id, targetType: "question" });
 

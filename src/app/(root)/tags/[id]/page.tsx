@@ -6,6 +6,8 @@ import DataRenderer from "@/components/DataRenderer";
 import LocalSearch from "@/components/search/LocalSearch";
 import ROUTES from "@/constants/routes";
 import { EMPTY_QUESTION } from "@/constants/states";
+import CommonFilter from "@/components/filters/CommonFilter";
+import { HomePageFilters } from "@/constants/filter";
 
 const TagDetailsPage = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
@@ -23,12 +25,17 @@ const TagDetailsPage = async ({ params, searchParams }: RouteParams) => {
       <section className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
         <h1 className="h1-bold text-dark100_light900">{tag?.name}</h1>
       </section>
-      <section className="mt-11">
+      <section className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearch
           imgSrc="/icons/search.svg"
           route={ROUTES.TAG(id)}
           placeholder="Search for Questions..."
           otherClasses="flex-1"
+        />
+        <CommonFilter
+          filters={HomePageFilters}
+          otherClasses="min-h-[56px] sm:min-w-[170px]"
+          containerClasses="hidden max-md:flex"
         />
       </section>
 
@@ -40,17 +47,7 @@ const TagDetailsPage = async ({ params, searchParams }: RouteParams) => {
         render={(questions) => (
           <div className="mt-10 flex w-full flex-col gap-6">
             {questions.map((question) => (
-              <QuestionCard
-                key={question._id}
-                _id={question._id}
-                title={question.title}
-                tags={question.tags}
-                author={question.author}
-                createdAt={question.createdAt}
-                upvotes={question.upvotes}
-                answers={question.answers}
-                views={question.views}
-              />
+              <QuestionCard key={question._id} {...question} />
             ))}
           </div>
         )}
