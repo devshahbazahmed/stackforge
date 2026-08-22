@@ -15,8 +15,7 @@ import Question, { IQuestionDoc } from "@/database/question.model";
 import Tag, { ITagDoc } from "@/database/tag.model";
 import TagQuestion from "@/database/tagQuestion.model";
 import { CreateQuestionParams, EditQuestionParams, GetQuestionParams, IncrementViewsParams } from "@/types/action";
-import { revalidatePath } from "next/cache";
-import ROUTES from "@/constants/routes";
+import dbConnect from "@/lib/mongoose";
 
 export async function createQuestion(params: CreateQuestionParams): Promise<ActionResponse<QuestionResponse>> {
   const validationResult = await action({ params, schema: AskQuestionSchema, authorize: true });
@@ -264,6 +263,18 @@ export async function incrementViews(params: IncrementViewsParams): Promise<Acti
     await question.save();
 
     return { success: true, data: { views: question.views } };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function getHotQuestions(): Promise<ActionResponse<QuestionResponse[]>> {
+  try {
+    await dbConnect();
+
+    const questions = await Question.find().sort({ views: -1, upvotes: -1 }).limit(5);
+
+    return { success: true, data: JSON.parse(JSON.stringify(questions)) };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }

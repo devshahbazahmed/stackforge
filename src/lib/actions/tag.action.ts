@@ -5,6 +5,7 @@ import { GetTagQuestionsSchema, PaginatedSearchParamsSchema } from "@/lib/valida
 import handleError from "@/lib/handlers/error";
 import { Question as QuestionModel, Tag as TagModel } from "@/database";
 import { GetTagQuestionsParams } from "@/types/action";
+import dbConnect from "@/lib/mongoose";
 
 export async function getTags(
   params: PaginatedSearchParams
@@ -102,6 +103,18 @@ export async function getTagQuestions(
       success: true,
       data: { tag: JSON.parse(JSON.stringify(tag)), questions: JSON.parse(JSON.stringify(questions)), isNext },
     };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function getTopTags(): Promise<ActionResponse<Tag[]>> {
+  try {
+    await dbConnect();
+
+    const tags = await TagModel.find().sort({ questions: -1 }).limit(5);
+
+    return { success: true, data: JSON.parse(JSON.stringify(tags)) };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
